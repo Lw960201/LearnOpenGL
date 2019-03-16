@@ -99,29 +99,8 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 	//往GL_ELEMENT_ARRAY_BUFFER中传入数据
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
-	//====================TEXTURE_2D_BUFFER============================================
-	//生成一个texBuffer
-	unsigned int texBuffer;
-	glGenTextures(1,&texBuffer);
-	//绑定，让之后的纹理命令都可以配置当前绑定的纹理
-	glBindTexture(GL_TEXTURE_2D,texBuffer);
 
-	//放入原图
-	int width, height, nrChannels;//图宽，图高，颜色通道
-	unsigned char *data = stbi_load("container.jpg",&width,&height,&nrChannels,0);
-	if (data)
-	{
-		//
-		glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0/*是否要边缘*/,GL_RGB,GL_UNSIGNED_BYTE,data);
-		//绑定在GL_TEXTURE_2D上的图，给他生成mipmap，必须要
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		printf("Load Image Failed.");
-	}
-	//用完内存后释放内存
-	stbi_image_free(data);
+
 	//================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
 	//顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
 	//参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
@@ -135,21 +114,94 @@ int main()
 	//开启顶点特征值，用到shader中
 	glEnableVertexAttribArray(2);
 
+	//====================TEXTURE_2D_BUFFER============================================
+    //生成一个texBuffer
+	unsigned int texBufferA;
+	glGenTextures(1, &texBufferA);
+	//绑定，让之后的纹理命令都可以配置当前绑定的纹理
+	glBindTexture(GL_TEXTURE_2D, texBufferA);
+
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//放入原图============================================================================
+	int width, height, nrChannels;//图宽，图高，颜色通道
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+	//如果有数据
+	if (data)
+	{
+		//渲染图片
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0/*是否要边缘*/, GL_RGB, GL_UNSIGNED_BYTE, data);
+		//绑定在GL_TEXTURE_2D上的图，给他生成mipmap，必须要
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		printf("Load Image Failed.");
+	}
+	//用完内存后释放内存
+	stbi_image_free(data);
+
+	//生成一个texBuffer
+	unsigned int texBufferB;
+	glGenTextures(1, &texBufferB);
+	glActiveTexture(GL_TEXTURE1);
+	//绑定，让之后的纹理命令都可以配置当前绑定的纹理
+	glBindTexture(GL_TEXTURE_2D, texBufferB);
+
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	//放入原图============================================================================
+	//int width, height, nrChannels;//图宽，图高，颜色通道
+	data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
+	//如果有数据
+	if (data)
+	{
+		//渲染图片
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0/*是否要边缘*/, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		//绑定在GL_TEXTURE_2D上的图，给他生成mipmap，必须要
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		printf("Load Image Failed.");
+	}
+	//用完内存后释放内存
+	stbi_image_free(data);
+
+	myShader->use();
+	glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"), 0);
+	glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
+
 	//===================渲染循环==================================================
 	//如果窗口没有关闭
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 
-		glClearColor(0.0f,0.0f,0.0f,1.0f);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glBindTexture(GL_TEXTURE_2D,texBuffer);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texBufferA);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texBufferB);
+
+		myShader->use();
 		glBindVertexArray(VAO);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 
 	
-		myShader->use();
 
 		//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
 		//glDrawArrays(GL_TRIANGLES,0,12);
@@ -161,6 +213,10 @@ int main()
 		//获取事件
 		glfwPollEvents();
 	}
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	//清除内存
 	glfwTerminate();

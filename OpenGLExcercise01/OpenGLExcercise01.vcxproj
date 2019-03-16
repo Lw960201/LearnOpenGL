@@ -143,6 +143,7 @@
     <Text Include="vertexSource.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="awesomeface.png" />
     <Image Include="container.jpg" />
     <Image Include="pic.png" />
   </ItemGroup>
