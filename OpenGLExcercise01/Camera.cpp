@@ -11,6 +11,18 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 worldUp)
 	Up = glm::normalize(glm::cross(Right,Forward));
 }
 
+Camera::Camera(glm::vec3 position, float pitch/*俯角*/, float yaw/*左右角*/, glm::vec3 worldUp) {
+	Position = position;
+	WorldUp = worldUp;
+	//画图出来的值（需要画图知道如何通过两个角度计算出）
+	Forward.x = glm::cos(pitch) *glm::sin(yaw);
+	Forward.y = glm::sin(pitch);
+	Forward.z = glm::cos(pitch)*glm::cos(yaw);
+
+	Right = glm::normalize(glm::cross(Forward, WorldUp));
+	Up = glm::normalize(glm::cross(Right, Forward));
+}
+
 
 Camera::~Camera()
 {

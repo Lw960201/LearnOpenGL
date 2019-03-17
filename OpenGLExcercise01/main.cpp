@@ -251,7 +251,8 @@ int main()
 	glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
 
 	//实例化摄像机
-	Camera Camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
+	//Camera camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
+	Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f), glm::vec3(0,1.0f,0));
 	//===================基本变换==========================================
 	//glm::mat4 trans;
 	//位移。参数：要传值的目标，要移动的值
@@ -265,7 +266,7 @@ int main()
 	modelMat = glm::rotate(modelMat,glm::radians(-55.0f),glm::vec3(1.0f,0,0));
 	glm::mat4 viewMat;
 	//viewMat = glm::translate(viewMat,glm::vec3(0,0,-3.0f));
-	viewMat = Camera.GetViewMatrix();
+	viewMat = camera.GetViewMatrix();
 	glm::mat4 projMat;
 	//投影变换。参数：视角大小，横纵比，近裁剪面，远裁剪面(包括齐次除法和裁剪)
 	projMat = glm::perspective(glm::radians(45.0f),800.0f/600.0f,0.1f,100.0f);
