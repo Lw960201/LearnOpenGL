@@ -83,6 +83,15 @@ glm::vec3 cubePositions[] = {
   glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
+//前一次的鼠标坐标
+float lastX;
+float lastY;
+bool firstMouse = true;
+
+//实例化摄像机
+//Camera camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
+Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f), glm::vec3(0, 1.0f, 0));
+
 //用索引表示一个三角面：0，1，2    2，1，3.可以减少相同顶点的输入
 unsigned int indices[] = {//注意索引从0开始
 	0,1,3,//第一个三角形
@@ -95,6 +104,40 @@ void processInput(GLFWwindow* window) {
 	{
 		glfwWindowShouldClose(window);
 	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		camera.SpeedZ = 1.0f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		camera.SpeedZ = -1.0f;
+	}
+	else
+	{
+		camera.SpeedZ = 0;
+	}
+}
+
+//鼠标回调方法必须参数是GLFWwindow*、double、double
+void mouse_callback(GLFWwindow* window,double xPos,double yPos) {
+	//避免首次偏移值太大
+	if (firstMouse == true)
+	{
+		lastX = xPos;
+		lastY = yPos;
+		firstMouse = false;
+	}
+	//每次的偏移量
+	float deltaX, deltaY;
+	//与上一次鼠标位置的偏移量
+	deltaX = xPos - lastX;
+	deltaY = yPos - lastY;
+	//把这一次的鼠标坐标值赋值给上一次的鼠标坐标值
+	lastX = xPos;
+	lastY = yPos;
+	//printf("%f \n",deltaX);
+
+	camera.ProcessMouseMovement(deltaX,deltaY);
 }
 
 
@@ -125,6 +168,11 @@ int main()
 
 	//window继续使用在上下文（继续使用window）
 	glfwMakeContextCurrent(window);
+
+	//关掉鼠标显示.参数：哪个窗口，鼠标类型，禁用鼠标
+	glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
+	//当鼠标移动时调用回调回调方法。参数：哪个窗口被监测，调用哪个方法
+	glfwSetCursorPosCallback(window,mouse_callback);
 
 	//初始化 GLEW
 	glewExperimental = true;
@@ -250,9 +298,7 @@ int main()
 	glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"), 0);
 	glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
 
-	//实例化摄像机
-	//Camera camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
-	Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f), glm::vec3(0,1.0f,0));
+
 	//===================基本变换==========================================
 	//glm::mat4 trans;
 	//位移。参数：要传值的目标，要移动的值
@@ -266,7 +312,7 @@ int main()
 	modelMat = glm::rotate(modelMat,glm::radians(-55.0f),glm::vec3(1.0f,0,0));
 	glm::mat4 viewMat;
 	//viewMat = glm::translate(viewMat,glm::vec3(0,0,-3.0f));
-	viewMat = camera.GetViewMatrix();
+	//viewMat = camera.GetViewMatrix();
 	glm::mat4 projMat;
 	//投影变换。参数：视角大小，横纵比，近裁剪面，远裁剪面(包括齐次除法和裁剪)
 	projMat = glm::perspective(glm::radians(45.0f),800.0f/600.0f,0.1f,100.0f);
@@ -297,15 +343,19 @@ int main()
 		//绑定纹理B
 		glBindTexture(GL_TEXTURE_2D, texBufferB);
 
+		glBindVertexArray(VAO);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
+
+		viewMat = camera.GetViewMatrix();
+
 		for (size_t i = 0; i < 10; i++)
 		{
 			glm::mat4 modelMat2;//初始位置
 			modelMat2 = glm::translate(modelMat2,cubePositions[i]);//位移
 			float angle = 20.0f * i;
 			modelMat2 = glm::rotate(modelMat2,glm::radians(angle),glm::vec3(1.0f,0.3f,0.5f));
+
 			myShader->use();
-			glBindVertexArray(VAO);
-			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 
 			//uniform变量的位置
 			unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
@@ -328,6 +378,9 @@ int main()
 		glfwSwapBuffers(window);
 		//获取事件
 		glfwPollEvents();
+
+		//调用摄像机按下WS键前后移动的方法
+		camera.UpdateCameraPos();
 	}
 
 	glDeleteVertexArrays(1, &VAO);
