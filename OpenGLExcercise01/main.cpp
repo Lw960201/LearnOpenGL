@@ -10,7 +10,9 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>//跟opengl做互传的时候需要
+
+#include "Camera.h"
 
 //模型顶点数据=======================================================================
 //float vertices[] = {
@@ -22,6 +24,7 @@
 //
 //};
 
+//一个Cube的顶点坐标
 float vertices[] = {
 	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -64,6 +67,20 @@ float vertices[] = {
 	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+};
+
+//多个cube的位置
+glm::vec3 cubePositions[] = {
+  glm::vec3(0.0f,  0.0f,  0.0f),
+  glm::vec3(2.0f,  5.0f, -15.0f),
+  glm::vec3(-1.5f, -2.2f, -2.5f),
+  glm::vec3(-3.8f, -2.0f, -12.3f),
+  glm::vec3(2.4f, -0.4f, -3.5f),
+  glm::vec3(-1.7f,  3.0f, -7.5f),
+  glm::vec3(1.3f, -2.0f, -2.5f),
+  glm::vec3(1.5f,  2.0f, -2.5f),
+  glm::vec3(1.5f,  0.2f, -1.5f),
+  glm::vec3(-1.3f,  1.0f, -1.5f)
 };
 
 //用索引表示一个三角面：0，1，2    2，1，3.可以减少相同顶点的输入
@@ -232,6 +249,9 @@ int main()
 	myShader->use();
 	glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"), 0);
 	glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
+
+	//实例化摄像机
+	Camera Camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
 	//===================基本变换==========================================
 	//glm::mat4 trans;
 	//位移。参数：要传值的目标，要移动的值
@@ -244,7 +264,8 @@ int main()
 	glm::mat4 modelMat;
 	modelMat = glm::rotate(modelMat,glm::radians(-55.0f),glm::vec3(1.0f,0,0));
 	glm::mat4 viewMat;
-	viewMat = glm::translate(viewMat,glm::vec3(0,0,-3.0f));
+	//viewMat = glm::translate(viewMat,glm::vec3(0,0,-3.0f));
+	viewMat = Camera.GetViewMatrix();
 	glm::mat4 projMat;
 	//投影变换。参数：视角大小，横纵比，近裁剪面，远裁剪面(包括齐次除法和裁剪)
 	projMat = glm::perspective(glm::radians(45.0f),800.0f/600.0f,0.1f,100.0f);
@@ -257,7 +278,7 @@ int main()
 		//向左移动纹理
 		//trans = glm::translate(trans, glm::vec3(-0.01f, 0, 0));
 		//旋转
-		trans = glm::rotate(trans, (float)(glfwGetTime())/* glm::radians(45.0f)*/, glm::vec3(0, 0, 1.0f));
+		trans = glm::rotate(trans, (float)(glfwGetTime())/* glm::radians(45.0f)*/, glm::vec3(1.0f, 0.3f, 0.5f));
 		//缩放
 		//trans = glm::scale(trans, glm::vec3( (float)sin(2*glfwGetTime()),(float)sin(2*glfwGetTime()), (float)sin(2*glfwGetTime()) ));
 		//当在此窗口按下ESC
@@ -275,25 +296,32 @@ int main()
 		//绑定纹理B
 		glBindTexture(GL_TEXTURE_2D, texBufferB);
 
-		myShader->use();
-		glBindVertexArray(VAO);
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
+		for (size_t i = 0; i < 10; i++)
+		{
+			glm::mat4 modelMat2;//初始位置
+			modelMat2 = glm::translate(modelMat2,cubePositions[i]);//位移
+			float angle = 20.0f * i;
+			modelMat2 = glm::rotate(modelMat2,glm::radians(angle),glm::vec3(1.0f,0.3f,0.5f));
+			myShader->use();
+			glBindVertexArray(VAO);
+			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 
-		//uniform变量的位置
-		unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
-		unsigned int modelMatLoc = glGetUniformLocation(myShader->ID, "modelMat");
-		unsigned int viewMatLoc = glGetUniformLocation(myShader->ID, "viewMat");
-		unsigned int projMatLoc = glGetUniformLocation(myShader->ID, "projMat");
-		//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-		glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
-		glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
-		glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+			//uniform变量的位置
+			unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
+			unsigned int modelMatLoc = glGetUniformLocation(myShader->ID, "modelMat");
+			unsigned int viewMatLoc = glGetUniformLocation(myShader->ID, "viewMat");
+			unsigned int projMatLoc = glGetUniformLocation(myShader->ID, "projMat");
+			//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）
+			glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+			glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(modelMat2));
+			glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
 
-		//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
-		glDrawArrays(GL_TRIANGLES,0,36);
-		//通过索引画出来，参数：画的类型，尺寸，都是什么类型，偏移值
-		//glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+			//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
+			glDrawArrays(GL_TRIANGLES, 0, 36);//每调用一次，就是进行一次DrawCall
+			//通过索引画出来，参数：画的类型，尺寸，都是什么类型，偏移值
+			//glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+		}
 
 		//转换前后Buffer
 		glfwSwapBuffers(window);
