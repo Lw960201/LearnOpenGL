@@ -21,7 +21,9 @@ public:
 	//旋转角度缩放
 	float SceneX = 0.001f;
 	float SceneY = 0.001f;
-	//摄像机移动Z方向的移动速度
+	//摄像机移动方向的移动速度
+	float SpeedX = 0;
+	float SpeedY = 0;
 	float SpeedZ = 0;
 
 	//得到View矩阵

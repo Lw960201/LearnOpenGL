@@ -91,8 +91,9 @@ bool firstMouse = true;
 void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		glfwWindowShouldClose(window);
+		glfwSetWindowShouldClose(window,true);
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camera.SpeedZ = 1.0f;
@@ -104,6 +105,32 @@ void processInput(GLFWwindow* window) {
 	else
 	{
 		camera.SpeedZ = 0;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		camera.SpeedX = 1.0f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		camera.SpeedX = -1.0f;
+	}
+	else
+	{
+		camera.SpeedX = 0;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		camera.SpeedY= -1.0f;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		camera.SpeedY = 1.0f;
+	}
+	else
+	{
+		camera.SpeedY = 0;
 	}
 }
 
@@ -279,7 +306,7 @@ int main()
 		processInput(window);
 
 		//Clear Screen
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//清除颜色缓存或者深度缓存
 		glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
 
@@ -312,10 +339,11 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
-			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,0.5f,0.31f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),1.0f,1.0f,1.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,0.5f,0.3f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.2f,0.1f,0.0f);
 			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),10.0f,10.0f,5.0f);
 			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),1.0f,1.0f,1.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"cameraPos"),camera.Position.x,camera.Position.y,camera.Position.z);
 			//Set Model====================================
 			glBindVertexArray(VAO);
 
