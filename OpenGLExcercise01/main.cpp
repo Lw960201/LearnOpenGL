@@ -13,16 +13,60 @@
 #include <glm/gtc/type_ptr.hpp>
 
 //模型顶点数据=======================================================================
+//float vertices[] = {
+//	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+//	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
+//	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+//   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
+//   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+//
+//};
+
 float vertices[] = {
-	//     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
-	0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // 右上
-	0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-   -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-   -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
-//用索引表示一个三角面：0，1，2    2，1，3.可以减少相同顶点的输入
 
+//用索引表示一个三角面：0，1，2    2，1，3.可以减少相同顶点的输入
 unsigned int indices[] = {//注意索引从0开始
 	0,1,3,//第一个三角形
 	2,3,1 //第二个三角形
@@ -76,6 +120,8 @@ int main()
 	}
 
 	glViewport(0,0,800,600);
+	//开启深度测试
+	glEnable(GL_DEPTH_TEST);
 
 	//Shader testShader = Shader("vertexSource.txt","fragmentSource.txt");
 	//testShader.test();//对象配合.使用
@@ -108,13 +154,13 @@ int main()
 	//================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
 	//顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
 	//参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
-	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8 * sizeof(float),(void*)0);
+	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5 * sizeof(float),(void*)0);
 	//开启顶点特征值，用到shader中
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
 	//开启顶点特征值，用到shader中
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	//开启顶点特征值，用到shader中
 	glEnableVertexAttribArray(2);
 
@@ -207,19 +253,19 @@ int main()
 	//如果窗口没有关闭
 	while (!glfwWindowShouldClose(window))
 	{
-		//glm::mat4 trans;
+		glm::mat4 trans;
 		//向左移动纹理
 		//trans = glm::translate(trans, glm::vec3(-0.01f, 0, 0));
 		//旋转
-		//trans = glm::rotate(trans, (float)(glfwGetTime())/* glm::radians(45.0f)*/, glm::vec3(0, 0, 1.0f));
+		trans = glm::rotate(trans, (float)(glfwGetTime())/* glm::radians(45.0f)*/, glm::vec3(0, 0, 1.0f));
 		//缩放
 		//trans = glm::scale(trans, glm::vec3( (float)sin(2*glfwGetTime()),(float)sin(2*glfwGetTime()), (float)sin(2*glfwGetTime()) ));
 		//当在此窗口按下ESC
 		processInput(window);
 		//清空窗口颜色
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		//清除颜色缓存
-		glClear(GL_COLOR_BUFFER_BIT);
+		//清除颜色缓存或者深度缓存
+		glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
 		//更换活动纹理
 		glActiveTexture(GL_TEXTURE0);
 		//绑定纹理A
@@ -234,20 +280,20 @@ int main()
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 
 		//uniform变量的位置
-		//unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
+		unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
 		unsigned int modelMatLoc = glGetUniformLocation(myShader->ID, "modelMat");
 		unsigned int viewMatLoc = glGetUniformLocation(myShader->ID, "viewMat");
 		unsigned int projMatLoc = glGetUniformLocation(myShader->ID, "projMat");
 		//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）
-		//glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 		glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
 		glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
 		glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
 
 		//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
-		//glDrawArrays(GL_TRIANGLES,0,12);
+		glDrawArrays(GL_TRIANGLES,0,36);
 		//通过索引画出来，参数：画的类型，尺寸，都是什么类型，偏移值
-		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+		//glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 
 		//转换前后Buffer
 		glfwSwapBuffers(window);
