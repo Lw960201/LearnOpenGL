@@ -17,47 +17,47 @@
 #pragma region Model Data
 //一个Cube的顶点坐标
 float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	  0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	  0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	 -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	 -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	 -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	  0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	  0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 };
 
 //多个cube的位置
@@ -240,12 +240,15 @@ int main()
 		//================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
 		//顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
 		//参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 		//开启顶点特征值，用到shader中
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		////开启顶点特征值，用到shader中
+		//glEnableVertexAttribArray(2);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 		//开启顶点特征值，用到shader中
-		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 	#pragma endregion
 
 
@@ -257,10 +260,6 @@ int main()
 		texBufferB = LoadImageToGPU("awesomeface.png", GL_RGBA, GL_RGBA, 0);
 	#pragma endregion
 
-
-	myShader->use();
-	glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"),0);
-	glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
 
 	#pragma region Prepare MVP Matrices
 		glm::mat4 modelMat;
@@ -307,16 +306,16 @@ int main()
 			glBindTexture(GL_TEXTURE_2D, texBufferB);
 
 			//Set Material -> Uniforms=====================
-			//uniform变量的位置
-			//unsigned int transformLoc = glGetUniformLocation(myShader->ID, "transform");
-			unsigned int modelMatLoc = glGetUniformLocation(myShader->ID, "modelMat");
-			unsigned int viewMatLoc = glGetUniformLocation(myShader->ID, "viewMat");
-			unsigned int projMatLoc = glGetUniformLocation(myShader->ID, "projMat");
 			//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）	
-			glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
-			glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
-			glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
-
+			//glUniform1i(glGetUniformLocation(myShader->ID, "ourTexture"), 0);
+			//glUniform1i(glGetUniformLocation(myShader->ID, "ourFace"), 1);
+			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
+			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
+			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
+			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,0.5f,0.31f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),1.0f,1.0f,1.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),10.0f,10.0f,5.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),1.0f,1.0f,1.0f);
 			//Set Model====================================
 			glBindVertexArray(VAO);
 
