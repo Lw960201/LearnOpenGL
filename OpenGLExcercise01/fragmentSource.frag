@@ -2,6 +2,15 @@
 in vec3 FragPos;
 in vec3 Normal;
 
+struct Material{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shininess;
+};
+
+uniform Material material;
+
 //uniform sampler2D ourTexture;
 //uniform sampler2D ourFace;
 
@@ -18,9 +27,15 @@ void main(){
 	vec3 reflectVec = reflect(-lightDir,Normal);
 	vec3 cameraVec = normalize(cameraPos - FragPos);
 
-	float specularAmount = pow(max( dot(reflectVec,cameraVec),0),32);
-	vec3 specular = specularAmount * lightColor;
+	//specular
+	float specularAmount = pow(max( dot(reflectVec,cameraVec),0),material.shininess);
+	vec3 specular = material.specular * specularAmount * lightColor;
 
-	vec3 diffuse = max(dot( lightDir,Normal),0.0) * lightColor;
-	FragColor = vec4((diffuse + ambientColor +specular)*objColor,1.0);
+	//diffuse
+	vec3 diffuse =material.diffuse * max(dot( lightDir,Normal),0.0) * lightColor;
+
+	//ambient
+	vec3 ambient = material.ambient * ambientColor;
+
+	FragColor = vec4((ambient +diffuse +specular)*objColor,1.0);
 }
