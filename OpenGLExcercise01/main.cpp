@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Shader.h"//系统自带的头文件用<>，项目下的头文件用""
+#include "Material.h"
 //====对图片操作的api============
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -17,47 +18,48 @@
 #pragma region Model Data
 //一个Cube的顶点坐标
 float vertices[] = {
-	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-	 -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	// positions          // normals           // texture coords
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	 -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-	 -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-	 -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	  0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-	 -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	  0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-	 -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 };
 
 //多个cube的位置
@@ -248,6 +250,15 @@ int main()
 		Shader* myShader = new Shader("vertexSource.vert", "fragmentSource.frag");
 	#pragma endregion
 
+#pragma region Init Material
+		Material* myMaterial = new Material(myShader,
+			LoadImageToGPU("container2.png",GL_RGBA,GL_RGBA,Shader::DIFFUSE),
+			LoadImageToGPU("container2_specular.png",GL_RGBA,GL_RGBA,Shader::SPECULAR),
+			LoadImageToGPU("matrix.jpg",GL_RGB,GL_RGB,Shader::EMISSION),
+			glm::vec3(1.0f,1.0f,1.0f),
+			64.0f);
+#pragma endregion
+
 	#pragma region Init and Load Models to VAO,VBO
 
 		unsigned int VAO;//Vertex Array Object
@@ -267,24 +278,24 @@ int main()
 		//================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
 		//顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
 		//参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 		//开启顶点特征值，用到shader中
 		glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		////开启顶点特征值，用到shader中
-		//glEnableVertexAttribArray(2);
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 		//开启顶点特征值，用到shader中
-		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		//开启顶点特征值，用到shader中
+		glEnableVertexAttribArray(2);
 	#pragma endregion
 
 
 
 	#pragma region Init and Load Textures
-		unsigned int texBufferA;
+		/*unsigned int texBufferA;
 		texBufferA = LoadImageToGPU("container.jpg",GL_RGB,GL_RGB,0);
 		unsigned int texBufferB;
-		texBufferB = LoadImageToGPU("awesomeface.png", GL_RGBA, GL_RGBA, 0);
+		texBufferB = LoadImageToGPU("awesomeface.png", GL_RGBA, GL_RGBA, 0);*/
 	#pragma endregion
 
 
@@ -323,14 +334,12 @@ int main()
 			myShader->use();
 
 			//Set Material -> Textures=====================
-			//更换活动纹理
 			glActiveTexture(GL_TEXTURE0);
-			//绑定纹理A
-			glBindTexture(GL_TEXTURE_2D, texBufferA);
-			//更换活动纹理
-			glActiveTexture(GL_TEXTURE1);
-			//绑定纹理B
-			glBindTexture(GL_TEXTURE_2D, texBufferB);
+			glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse);
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, myMaterial->specular);
+			glActiveTexture(GL_TEXTURE0 + 2);
+			glBindTexture(GL_TEXTURE_2D, myMaterial->emission);
 
 			//Set Material -> Uniforms=====================
 			//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）	
@@ -339,16 +348,18 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "modelMat"), 1, GL_FALSE, glm::value_ptr(modelMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
-			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,0.5f,0.3f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.2f,0.1f,0.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,1.0f,1.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.1f,0.1f,0.1f);
 			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),10.0f,10.0f,5.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),1.0f,1.0f,1.0f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),1.0f,1.0f,1.0f/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
 			glUniform3f(glGetUniformLocation(myShader->ID,"cameraPos"),camera.Position.x,camera.Position.y,camera.Position.z);
 
-			glUniform3f(glGetUniformLocation(myShader->ID,"material.ambient"),1.0f,1.0f,1.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"material.diffuse"), 1.0f, 1.0f, 1.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"material.specular"), 1.0f, 1.0f, 1.0f);
-			glUniform1f(glGetUniformLocation(myShader->ID,"material.shininess"),32.0f);
+			myMaterial->shader->SetUniform3f("material.ambient",myMaterial->ambient);
+			myMaterial->shader->SetUniform1i("material.diffuse",Shader::DIFFUSE);
+			myMaterial->shader->SetUniform1i("material.specular",Shader::SPECULAR);
+			myMaterial->shader->SetUniform1i("material.emission",Shader::EMISSION);
+			//myMaterial->shader->SetUniform3f("material.specular",myMaterial->specular);
+			myMaterial->shader->SetUniform1f("material.shininess",myMaterial->shininess);
 			//Set Model====================================
 			glBindVertexArray(VAO);
 
