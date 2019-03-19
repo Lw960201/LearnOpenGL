@@ -15,6 +15,7 @@
 
 #include "Camera.h"
 #include "LightDirectional.h"
+#include "LightPoint.h"
 
 #pragma region Model Data
 //一个Cube的顶点坐标
@@ -85,7 +86,7 @@ Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f),
 #pragma endregion
 
 #pragma region Light Declare
-LightDirectional light = LightDirectional(glm::vec3(10.0f, 10.0f, 5.0f),glm::vec3(glm::radians(45.0f),0,0));
+LightPoint light = LightPoint(glm::vec3(1.0f, 1.0f, -1.0f),glm::vec3(glm::radians(45.0f),0,0),glm::vec3(1.0f,1.0f,1.0f));
 #pragma endregion
 
 #pragma region Input Declare(声明)
@@ -354,10 +355,14 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
 			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,1.0f,1.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.3f,0.3f,0.3f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.1f,0.1f,0.1f);
 			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),light.position.x,light.position.y,light.position.z);
 			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),light.color.x,light.color.y,light.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
-			glUniform3f(glGetUniformLocation(myShader->ID, "lightDir"), light.direction.x, light.direction.y, light.direction.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightDirUniform"), light.direction.x, light.direction.y, light.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID,"lightP.constant"),light.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID,"lightP.linear"),light.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID,"lightP.quadratic"),light.quadratic);
+
 			glUniform3f(glGetUniformLocation(myShader->ID,"cameraPos"),camera.Position.x,camera.Position.y,camera.Position.z);
 
 			myMaterial->shader->SetUniform3f("material.ambient",myMaterial->ambient);
