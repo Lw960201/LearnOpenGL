@@ -20,8 +20,8 @@ public://在C++中相同修饰符的变量要放一起
 	enum Slot
 	{
 		DIFFUSE,
-		SPECULAR,
-		EMISSION
+		SPECULAR
+		//EMISSION
 	};
 
 	void use();

@@ -19,13 +19,14 @@ uniform Material material;
 uniform vec3 objColor;
 uniform vec3 ambientColor;
 uniform vec3 lightPos;
+uniform vec3 lightDir;
 uniform vec3 lightColor;
 uniform vec3 cameraPos;
 
 out vec4 FragColor;		
 
 void main(){
-	vec3 lightDir = normalize(lightPos-FragPos);
+	//vec3 lightDir = normalize(lightPos-FragPos);
 	vec3 reflectVec = reflect(-lightDir,Normal);
 	vec3 cameraVec = normalize(cameraPos - FragPos);
 
@@ -38,9 +39,9 @@ void main(){
 	//vec3 diffuse = texture(material.diffuse,TexCoord).rgb;
 
 	//emission
-	vec3 emission = texture(material.emission, TexCoord).rgb * vec3(1.0f,1.0f,1.0f);
+	//vec3 emission = texture(material.emission, TexCoord).rgb * vec3(1.0f,1.0f,1.0f);
 	//ambient
 	vec3 ambient = texture(material.diffuse,TexCoord).rgb * ambientColor;
 
-	FragColor = vec4((ambient +diffuse +specular + emission)*objColor,1.0);
+	FragColor = vec4((ambient +diffuse +specular /*+ emission*/)*objColor,1.0);
 }

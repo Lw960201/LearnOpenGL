@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>//跟opengl做互传的时候需要
 
 #include "Camera.h"
+#include "LightDirectional.h"
 
 #pragma region Model Data
 //一个Cube的顶点坐标
@@ -81,6 +82,10 @@ glm::vec3 cubePositions[] = {
 //实例化摄像机
 //Camera camera(glm::vec3(0,0,3.0f),glm::vec3(0,0,0),glm::vec3(0,1.0f,0));
 Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f), glm::vec3(0, 1.0f, 0));
+#pragma endregion
+
+#pragma region Light Declare
+LightDirectional light = LightDirectional(glm::vec3(10.0f, 10.0f, 5.0f),glm::vec3(glm::radians(45.0f),0,0));
 #pragma endregion
 
 #pragma region Input Declare(声明)
@@ -250,14 +255,14 @@ int main()
 		Shader* myShader = new Shader("vertexSource.vert", "fragmentSource.frag");
 	#pragma endregion
 
-#pragma region Init Material
-		Material* myMaterial = new Material(myShader,
-			LoadImageToGPU("container2.png",GL_RGBA,GL_RGBA,Shader::DIFFUSE),
-			LoadImageToGPU("container2_specular.png",GL_RGBA,GL_RGBA,Shader::SPECULAR),
-			LoadImageToGPU("matrix.jpg",GL_RGB,GL_RGB,Shader::EMISSION),
-			glm::vec3(1.0f,1.0f,1.0f),
-			64.0f);
-#pragma endregion
+	#pragma region Init Material
+			Material* myMaterial = new Material(myShader,
+				LoadImageToGPU("container2.png",GL_RGBA,GL_RGBA,Shader::DIFFUSE),
+				LoadImageToGPU("container2_specular.png",GL_RGBA,GL_RGBA,Shader::SPECULAR),
+				/*LoadImageToGPU("matrix.jpg",GL_RGB,GL_RGB,Shader::EMISSION),*/
+				glm::vec3(1.0f,1.0f,1.0f),
+				64.0f);
+	#pragma endregion
 
 	#pragma region Init and Load Models to VAO,VBO
 
@@ -338,8 +343,8 @@ int main()
 			glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse);
 			glActiveTexture(GL_TEXTURE0 + 1);
 			glBindTexture(GL_TEXTURE_2D, myMaterial->specular);
-			glActiveTexture(GL_TEXTURE0 + 2);
-			glBindTexture(GL_TEXTURE_2D, myMaterial->emission);
+			//glActiveTexture(GL_TEXTURE0 + 2);
+			//glBindTexture(GL_TEXTURE_2D, myMaterial->emission);
 
 			//Set Material -> Uniforms=====================
 			//更改矩阵的值。参数：更改的变量位置，传几个矩阵，是否对矩阵转置，真正的矩阵数据（需要通过glm::value_ptr(trans)方法转换为opengl能接受的值）	
@@ -349,15 +354,16 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "viewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
 			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,1.0f,1.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.1f,0.1f,0.1f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),10.0f,10.0f,5.0f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),1.0f,1.0f,1.0f/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.3f,0.3f,0.3f);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),light.position.x,light.position.y,light.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),light.color.x,light.color.y,light.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightDir"), light.direction.x, light.direction.y, light.direction.z);
 			glUniform3f(glGetUniformLocation(myShader->ID,"cameraPos"),camera.Position.x,camera.Position.y,camera.Position.z);
 
 			myMaterial->shader->SetUniform3f("material.ambient",myMaterial->ambient);
 			myMaterial->shader->SetUniform1i("material.diffuse",Shader::DIFFUSE);
 			myMaterial->shader->SetUniform1i("material.specular",Shader::SPECULAR);
-			myMaterial->shader->SetUniform1i("material.emission",Shader::EMISSION);
+			//myMaterial->shader->SetUniform1i("material.emission",Shader::EMISSION);
 			//myMaterial->shader->SetUniform3f("material.specular",myMaterial->specular);
 			myMaterial->shader->SetUniform1f("material.shininess",myMaterial->shininess);
 			//Set Model====================================
