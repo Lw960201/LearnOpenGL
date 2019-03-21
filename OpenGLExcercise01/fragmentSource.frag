@@ -11,19 +11,39 @@ struct Material{
 	float shininess;
 };
 
+
+struct LightDirectional{
+	vec3 pos;
+	vec3 dirToLight;
+	vec3 color;
+};
+
 struct LightPoint{
+	vec3 pos;
+	vec3 dirToLight;
+	vec3 color;
 	float constant;
 	float linear;
 	float quadratic;
 };
 
 struct LightSpot{
+	vec3 pos;
+	vec3 dirToLight;
+	vec3 color;
+	float constant;
+	float linear;
+	float quadratic;
 	float cosPhyInner;
 	float cosPhyOutter;
 };
 
 uniform Material material;
-uniform LightPoint lightP;
+uniform LightDirectional lightD;
+uniform LightPoint lightP0;
+uniform LightPoint lightP1;
+uniform LightPoint lightP2;
+uniform LightPoint lightP3;
 uniform LightSpot lightS;
 
 //uniform sampler2D ourTexture;
@@ -31,62 +51,91 @@ uniform LightSpot lightS;
 
 uniform vec3 objColor;
 uniform vec3 ambientColor;
-uniform vec3 lightPos;
-uniform vec3 lightDirUniform;
-uniform vec3 lightColor;
+
 uniform vec3 cameraPos;
 
 out vec4 FragColor;		
 
-void main(){
-	
-	float dist = length(lightPos -FragPos);
-	//衰减值   
-	float attenuation = 1.0/(lightP.constant + lightP.linear *dist + 
-			lightP.quadratic * (dist * dist));
-	
-	vec3 lightDir = normalize(lightPos-FragPos);
-	vec3 reflectVec = reflect(-lightDir,Normal);
-	vec3 cameraVec = normalize(cameraPos - FragPos);
+//计算平行光
+vec3 CalcLightDirectional(LightDirectional light,vec3 uNormal,vec3 dirToCamera){
+	vec3 result = vec3(0,0,1);
+
+	//diffuse  max(dot(L,N),0)
+	float diffuseIntenSity = max(dot(light.dirToLight,uNormal),0);
+	vec3 diffuse = diffuseIntenSity * light.color * texture(material.diffuse,TexCoord).rgb;
+
+	//specular pow(max(dot(R,dirToCamera),0),material.shininess)
+	vec3 R = normalize(reflect(-lightD.dirToLight,uNormal));
+	float specularIntenSity = pow(max(dot(R,dirToCamera),0),material.shininess);
+	vec3 specular = specularIntenSity * lightD.color * texture(material.specular,TexCoord).rgb;
+	result = diffuse + specular;
+	return result;
+}
+
+//计算点光源
+vec3 CalcLightPoint(LightPoint light,vec3 uNormal,vec3 dirToCamera){
+	vec3 result = vec3(0,1,0);
+
+	//attenuation
+	float dist = length(light.pos - FragPos);
+	float attenuation = 1/(light.constant + light.linear * dist + light.quadratic *(dist * dist));
+	//diffuse
+	float diffuseIntenSity = max(dot(normalize(light.pos - FragPos),uNormal),0) * attenuation;
+	vec3 diffuse = diffuseIntenSity * light.color * texture(material.diffuse,TexCoord).rgb;
 
 	//specular
-	float specularAmount = pow(max( dot(reflectVec,cameraVec),0),material.shininess);
-	vec3 specular = texture(material.specular,TexCoord).rgb* specularAmount * lightColor;
+	vec3 R = normalize(reflect(-normalize(light.pos - FragPos),uNormal));
+	float specularIntenSity = pow(max(dot(R,dirToCamera),0),material.shininess) * attenuation;
+	vec3 specular = specularIntenSity * lightD.color * texture(material.specular,TexCoord).rgb;
 
-	//diffuse
-	vec3 diffuse =texture(material.diffuse,TexCoord).rgb * max(dot( lightDir,Normal),0.0) * lightColor;
-	//vec3 diffuse = texture(material.diffuse,TexCoord).rgb;
+	result = diffuse + specular;
+	return result;
+}
 
-	//emission
-	//vec3 emission = texture(material.emission, TexCoord).rgb * vec3(1.0f,1.0f,1.0f);
-	//ambient
-	vec3 ambient = texture(material.diffuse,TexCoord).rgb * ambientColor;
-
-	float cosTheta = dot(normalize(FragPos - lightPos),-1*lightDirUniform);
-
+vec3 CalcLightSpot(LightSpot light,vec3 uNormal,vec3 dirToCamera){
+	vec3 result = vec3(0,0,1);
+	//attenuation
+	float dist = length(light.pos - FragPos);
+	float attenuation = 1/(light.constant + light.linear * dist + light.quadratic * (dist * dist));
+	//
 	float spotRatio;
-	if(cosTheta > lightS.cosPhyInner){
-		//inside
-		spotRatio = 1.0f;
+	float cosTheta = dot(normalize(FragPos - light.pos),-light.dirToLight);
+
+	if(cosTheta > light.cosPhyInner){
+		spotRatio = 1.0;
 	}
-	else if(cosTheta > lightS.cosPhyOutter){
-		//middle
-		spotRatio =1.0f- (cosTheta - lightS.cosPhyInner)/(lightS.cosPhyOutter - lightS.cosPhyInner);
+	else if(cosTheta > light.cosPhyOutter){
+		spotRatio = (cosTheta - light.cosPhyOutter)/(light.cosPhyInner - light.cosPhyOutter);
 	}
 	else{
-		//outside
-		spotRatio = 0.0f;
+		spotRatio = 0;
 	}
+	//diffuse
+	float diffuseIntenSity = max(dot(normalize(light.pos - FragPos),uNormal),0) * attenuation * spotRatio;
+	vec3 diffuse = diffuseIntenSity * light.color * texture(material.diffuse,TexCoord).rgb;
+	//specular
+	vec3 R = normalize(reflect(-normalize(light.pos - FragPos),uNormal));
+	float specularIntenSity = pow(max(dot(R,dirToCamera),0),material.shininess) * attenuation * spotRatio;
+	vec3 specular = specularIntenSity * light.color * texture(material.specular,TexCoord).rgb;
 
-	FragColor = vec4((ambient +(diffuse +specular) *spotRatio)*objColor,1.0);
-//	if(cosTheta > lightS.cosPhy){
-//		//inside
-//		FragColor = vec4((ambient +(diffuse +specular) /*+ emission*/)*objColor,1.0);
-//	}
-//	else
-//	{
-//		//outside
-//		FragColor = vec4((ambient)*objColor,1.0);
-//	}
+	result = diffuse + specular;
+	return result;
+}
 
+void main(){
+	
+	vec3 finalResult = vec3(0,0,0);
+
+	vec3 uNormal = normalize(Normal);
+	vec3 dirToCamera = normalize(cameraPos - FragPos);
+
+	finalResult += CalcLightDirectional(lightD,uNormal,dirToCamera);
+	finalResult += CalcLightPoint(lightP0,uNormal,dirToCamera);
+	finalResult += CalcLightPoint(lightP1,uNormal,dirToCamera);
+	finalResult += CalcLightPoint(lightP2,uNormal,dirToCamera);
+	finalResult += CalcLightPoint(lightP3,uNormal,dirToCamera);
+	finalResult += CalcLightSpot(lightS,uNormal,dirToCamera);
+
+	//FragColor = vec4(finalResult,1.0f);
+	FragColor = vec4(1.0f,1.0f,1.0f,1.0f);
 }

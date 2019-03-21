@@ -18,6 +18,8 @@
 #include "LightPoint.h"
 #include "LightSpot.h"
 
+#include "Mesh.h"
+
 #pragma region Model Data
 //一个Cube的顶点坐标
 float vertices[] = {
@@ -87,7 +89,26 @@ Camera camera(glm::vec3(0, 0, 3.0f), glm::radians(-15.0f), glm::radians(180.0f),
 #pragma endregion
 
 #pragma region Light Declare
-LightSpot light = LightSpot(glm::vec3(0.0f, 5.0f, 0.0f),glm::vec3(glm::radians(90.0f),0,0),glm::vec3(1.0f,1.0f,1.0f));
+LightDirectional lightD (glm::vec3(1.0f, 1.0f, -1.0f),
+	glm::vec3(glm::radians(90.0f), glm::radians(0.0f),0),
+	glm::vec3(1.0f,1.0f,1.0f));
+
+LightPoint lightP0 (glm::vec3(1.0f, 0, 0),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f),0),
+	glm::vec3(1.0f,0,0));
+LightPoint lightP1 (glm::vec3(0, 1.0f, 0),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
+	glm::vec3(0, 1.0f, 0));
+LightPoint lightP2 (glm::vec3(0, 0, 1.0f),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
+	glm::vec3(0, 0, 1.0f));
+LightPoint lightP3 (glm::vec3(-1.0f, 0,0),
+	glm::vec3(glm::radians(45.0f), glm::radians(45.0f), 0),
+	glm::vec3(1.0f, 1.0f, 1.0f));
+
+LightSpot lightS (glm::vec3(0, 3, 0),
+	glm::vec3(glm::radians(90.0f), glm::radians(0.0f), 0),
+	glm::vec3(1.0f, 1.0f, 0));
 #pragma endregion
 
 #pragma region Input Declare(声明)
@@ -267,33 +288,33 @@ int main()
 	#pragma endregion
 
 	#pragma region Init and Load Models to VAO,VBO
+			Mesh cube(vertices);
+		//unsigned int VAO;//Vertex Array Object
+		////生成一个VAO
+		//glGenVertexArrays(1,&VAO);
+		////绑定
+		//glBindVertexArray(VAO);
+		////=====================VBO===============================================
+		//unsigned int VBO;//Vertex Buffer Object
+		////生成一个VBO
+		//glGenBuffers(1,&VBO);
+		////从ARRAY_BUFFER绑上VAO了
+		//glBindBuffer(GL_ARRAY_BUFFER,VBO);
+		////传递数据通过ARRAY_BUFFER传给VAO.参数1：传递的目标，参数2:数据的尺寸，参数3：数据，参数4：绘制的数据是否常变
+		//glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
 
-		unsigned int VAO;//Vertex Array Object
-		//生成一个VAO
-		glGenVertexArrays(1,&VAO);
-		//绑定
-		glBindVertexArray(VAO);
-		//=====================VBO===============================================
-		unsigned int VBO;//Vertex Buffer Object
-		//生成一个VBO
-		glGenBuffers(1,&VBO);
-		//从ARRAY_BUFFER绑上VAO了
-		glBindBuffer(GL_ARRAY_BUFFER,VBO);
-		//传递数据通过ARRAY_BUFFER传给VAO.参数1：传递的目标，参数2:数据的尺寸，参数3：数据，参数4：绘制的数据是否常变
-		glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-
-		//================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
-		//顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
-		//参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-		//开启顶点特征值，用到shader中
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-		//开启顶点特征值，用到shader中
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-		//开启顶点特征值，用到shader中
-		glEnableVertexAttribArray(2);
+		////================配置顶点特征值：如顶点位置，顶点颜色，纹理坐标==============================================
+		////顶点特征值，参数1：从哪里开始，参数2：一次塞多少，参数3：都是什么类型的顶点，
+		////参数4：是否正规化到±1之间，参数5：每次获取顶点间隔多少，参数6：第一次获取从偏移多少的地方开始
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		////开启顶点特征值，用到shader中
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		////开启顶点特征值，用到shader中
+		//glEnableVertexAttribArray(1);
+		//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		////开启顶点特征值，用到shader中
+		//glEnableVertexAttribArray(2);
 	#pragma endregion
 
 
@@ -330,7 +351,7 @@ int main()
 
 		viewMat = camera.GetViewMatrix();
 
-		for (size_t i = 0; i < 10; i++)
+		for (size_t i = 0; i < 1; i++)
 		{
 			//Set Model Matrix
 			modelMat = glm::translate(glm::mat4(1.0f)/*单位矩阵*/,cubePositions[i]);//位移
@@ -341,10 +362,10 @@ int main()
 			myShader->use();
 
 			//Set Material -> Textures=====================
-			glActiveTexture(GL_TEXTURE0);
+			/*glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, myMaterial->diffuse);
 			glActiveTexture(GL_TEXTURE0 + 1);
-			glBindTexture(GL_TEXTURE_2D, myMaterial->specular);
+			glBindTexture(GL_TEXTURE_2D, myMaterial->specular);*/
 			//glActiveTexture(GL_TEXTURE0 + 2);
 			//glBindTexture(GL_TEXTURE_2D, myMaterial->emission);
 
@@ -357,14 +378,52 @@ int main()
 			glUniformMatrix4fv(glGetUniformLocation(myShader->ID, "projMat"), 1, GL_FALSE, glm::value_ptr(projMat));
 			glUniform3f(glGetUniformLocation(myShader->ID,"objColor"),1.0f,1.0f,1.0f);
 			glUniform3f(glGetUniformLocation(myShader->ID,"ambientColor"),0.3f,0.3f,0.3f);
-			glUniform3f(glGetUniformLocation(myShader->ID,"lightPos"),light.position.x,light.position.y,light.position.z);
-			glUniform3f(glGetUniformLocation(myShader->ID,"lightColor"),light.color.x,light.color.y,light.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
-			glUniform3f(glGetUniformLocation(myShader->ID, "lightDirUniform"), light.direction.x, light.direction.y, light.direction.z);
+
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightD.pos"),lightD.position.x,lightD.position.y,lightD.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID,"lightD.color"),lightD.color.x,lightD.color.y,lightD.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightD.dirToLight"), lightD.direction.x, lightD.direction.y, lightD.direction.z);
+
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP0.pos"), lightP0.position.x, lightP0.position.y, lightP0.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP0.color"), lightP0.color.x, lightP0.color.y, lightP0.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP0.dirToLight"), lightP0.direction.x, lightP0.direction.y, lightP0.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP0.constant"), lightP0.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP0.linear"), lightP0.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP0.quadrtic"), lightP0.quadratic);
+
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP1.pos"), lightP1.position.x, lightP1.position.y, lightP1.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP1.color"), lightP1.color.x, lightP1.color.y, lightP1.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP1.dirToLight"), lightP1.direction.x, lightP1.direction.y, lightP1.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP1.constant"), lightP1.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP1.linear"), lightP1.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP1.quadrtic"), lightP1.quadratic);
+
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP2.pos"), lightP2.position.x, lightP2.position.y, lightP2.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP2.color"), lightP2.color.x, lightP2.color.y, lightP2.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP2.dirToLight"), lightP2.direction.x, lightP2.direction.y, lightP2.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP2.constant"), lightP2.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP2.linear"), lightP2.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP2.quadrtic"), lightP2.quadratic);
+
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP3.pos"), lightP3.position.x, lightP3.position.y, lightP3.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP3.color"), lightP3.color.x, lightP3.color.y, lightP3.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightP3.dirToLight"), lightP3.direction.x, lightP3.direction.y, lightP3.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP3.constant"), lightP3.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP3.linear"), lightP3.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightP3.quadrtic"), lightP3.quadratic);
+
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightS.pos"), lightS.position.x, lightS.position.y, lightS.position.z);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightS.color"), lightS.color.x, lightS.color.y, lightS.color.z/*sin(glfwGetTime() * 2.0f) +0.5f, sin(glfwGetTime() * 5.0f)+0.5f, sin(glfwGetTime() * 10.0f)+0.5f*/);
+			glUniform3f(glGetUniformLocation(myShader->ID, "lightS.dirToLight"), lightS.direction.x, lightS.direction.y, lightS.direction.z);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightS.constant"), lightS.constant);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightS.linear"), lightS.linear);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightS.quadrtic"), lightS.quadratic);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightS.cosPhyInner"), lightS.cosPhyInner);
+			glUniform1f(glGetUniformLocation(myShader->ID, "lightS.cosPhyOutter"), lightS.cosPhyOutter);
 			//glUniform1f(glGetUniformLocation(myShader->ID,"lightP.constant"),light.constant);
 			//glUniform1f(glGetUniformLocation(myShader->ID,"lightP.linear"),light.linear);
 			//glUniform1f(glGetUniformLocation(myShader->ID,"lightP.quadratic"),light.quadratic);
-			glUniform1f(glGetUniformLocation(myShader->ID,"lightS.cosPhyInner"),light.cosPhyInner);
-			glUniform1f(glGetUniformLocation(myShader->ID,"lightS.cosPhyOutter"),light.cosPhyOutter);
+			//glUniform1f(glGetUniformLocation(myShader->ID,"lightS.cosPhyInner"),light.cosPhyInner);
+			//glUniform1f(glGetUniformLocation(myShader->ID,"lightS.cosPhyOutter"),light.cosPhyOutter);
 
 			glUniform3f(glGetUniformLocation(myShader->ID,"cameraPos"),camera.Position.x,camera.Position.y,camera.Position.z);
 
@@ -375,11 +434,13 @@ int main()
 			//myMaterial->shader->SetUniform3f("material.specular",myMaterial->specular);
 			myMaterial->shader->SetUniform1f("material.shininess",myMaterial->shininess);
 			//Set Model====================================
-			glBindVertexArray(VAO);
+			//glBindVertexArray(VAO);
 
 			//Draw Call====================================
 			//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
-			glDrawArrays(GL_TRIANGLES, 0, 36);//每调用一次，就是进行一次DrawCall
+			//glDrawArrays(GL_TRIANGLES, 0, 36);//每调用一次，就是进行一次DrawCall
+
+			cube.Draw(myMaterial->shader);
 		}
 
 		//Clean up,propare for next render loop===============================
@@ -391,8 +452,8 @@ int main()
 		camera.UpdateCameraPos();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	/*glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);*/
 
 	// Exit program=================================================
 	//清除内存

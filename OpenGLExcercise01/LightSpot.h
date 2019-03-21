@@ -18,6 +18,10 @@ public:
 	glm::vec3 direction = glm::vec3(0, 0, 1.0f);
 	glm::vec3 color;
 
+	float constant = 1.0f;
+	float linear = 0.3f;
+	float quadratic = 0.001f;
+
 	float cosPhyInner = 0.9f;
 	float cosPhyOutter = 0.85f;
 
