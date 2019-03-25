@@ -100,24 +100,24 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
 		//漫反射
-		std::vector<Texture> diffuseMaps = loadMaterialTextures(material,aiTextureType_DIFFUSE,"texture_diffuse");
+		//std::vector<Texture> diffuseMaps = loadMaterialTextures(material,aiTextureType_DIFFUSE,"texture_diffuse");
 		//高光反射
 	}
 
 	return Mesh(tempVertices, tempIndices, {});
 }
 
-std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
-	
-	std::vector<Texture> textures;
-
-	//遍历材质的所有纹理(一个类型)
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-	{
-		aiString str;
-		//贴图的位置给str
-		mat->GetTexture(type,i,&str);
-		//
-
-	}
-}
+//std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
+//	
+//	std::vector<Texture> textures;
+//
+//	//遍历材质的所有纹理(一个类型)
+//	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+//	{
+//		aiString str;
+//		//贴图的位置给str
+//		mat->GetTexture(type,i,&str);
+//		//
+//
+//	}
+//}
