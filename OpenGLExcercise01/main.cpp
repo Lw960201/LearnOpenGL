@@ -19,6 +19,7 @@
 #include "LightSpot.h"
 
 #include "Mesh.h"
+#include "Model.h"
 
 #pragma region Model Data
 //一个Cube的顶点坐标
@@ -224,8 +225,11 @@ unsigned int LoadImageToGPU(const char* fileName,GLint internalFormat,GLenum for
 	return texBuffer;
 }
 
-int main()
+int main(int argc,char* argv[])
 {
+	std::string exePath = argv[0];
+	//std::cout << exePath.substr(0,exePath.find_last_of("\\")) + "\\model\\nanosuit.obj" << std::endl;
+
 	#pragma region Open a Window
 
 		//===================初始化====================================================
@@ -288,7 +292,8 @@ int main()
 	#pragma endregion
 
 	#pragma region Init and Load Models to VAO,VBO
-			Mesh cube(vertices);
+			//Mesh cube(vertices);
+			Model model(exePath.substr(0, exePath.find_last_of("\\")) + "\\model\\nanosuit.obj");
 		//unsigned int VAO;//Vertex Array Object
 		////生成一个VAO
 		//glGenVertexArrays(1,&VAO);
@@ -440,7 +445,8 @@ int main()
 			//画个三角面,参数1：要画的类型，参数2：从索引几开始，参数3：画几个索引
 			//glDrawArrays(GL_TRIANGLES, 0, 36);//每调用一次，就是进行一次DrawCall
 
-			cube.Draw(myMaterial->shader);
+			//cube.Draw(myMaterial->shader);
+			model.Draw(myMaterial->shader);
 		}
 
 		//Clean up,propare for next render loop===============================

@@ -136,6 +136,6 @@ void main(){
 	finalResult += CalcLightPoint(lightP3,uNormal,dirToCamera);
 	finalResult += CalcLightSpot(lightS,uNormal,dirToCamera);
 
-	//FragColor = vec4(finalResult,1.0f);
-	FragColor = vec4(1.0f,1.0f,1.0f,1.0f);
+	FragColor = vec4(finalResult,1.0f);
+	//FragColor = vec4(1.0f,1.0f,1.0f,1.0f);
 }
